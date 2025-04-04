@@ -1,3 +1,12 @@
+import logging
+
+class Logger:
+    @staticmethod
+    def log(message):
+        logging.basicConfig(level=logging.INFO)
+        logging.info(message)
+
+
 import os
 import sys
 import logging

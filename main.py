@@ -1,3 +1,15 @@
+import sys
+import os
+
+# Add src to path
+sys.path.append(os.path.join(os.getcwd(), "src"))
+
+# Import pipeline
+from textSummarizer.pipeline import stage_01_data_ingestion
+
+
+
+
 from textSummarizer.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 
 from textSummarizer.logging import logger

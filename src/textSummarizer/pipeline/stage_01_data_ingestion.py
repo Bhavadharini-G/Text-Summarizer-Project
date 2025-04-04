@@ -1,3 +1,8 @@
+from textSummarizer.logging import Logger
+
+Logger.log("✅ Data ingestion stage started")
+
+
 from textSummarizer.config.configuration import ConfigurationManager
 from textSummarizer.conponents.data_ingestion import DataIngestion
 from textSummarizer.logging import Logger
