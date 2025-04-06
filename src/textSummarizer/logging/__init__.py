@@ -29,3 +29,5 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger("textSummarizerLogger")
+Logger.log("Data ingestion stage started")
+
