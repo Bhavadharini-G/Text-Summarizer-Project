@@ -174,7 +174,4 @@ cython_debug/
 .pypirc
 artifacts/*
 
-echo "# Trigger workflow" >> .gitignore
-git add .gitignore
-git commit -m "chore: trigger GitHub Actions workflow"
-git push origin main
+
