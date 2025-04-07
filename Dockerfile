@@ -1,42 +1,48 @@
-# Use Python 3.12 slim image
-FROM python:3.12-slim
+FROM python:3.12
 
-# Avoids prompts from apt
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies and AWS CLI
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    awscli \
+# System dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    git \
     curl \
-    libffi-dev \
-    libssl-dev \
-    libxml2-dev \
-    libxslt1-dev \
+    git \
+    wget \
+    libglib2.0-0 \
+    libsm6 \
+    libxrender1 \
+    libxext6 \
+    libgl1-mesa-glx \
     libjpeg-dev \
     zlib1g-dev \
-    libgl1-mesa-glx \
+    libxml2-dev \
+    libxslt1-dev \
+    libffi-dev \
+    awscli \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy requirements file first to leverage Docker cache
+# Copy and install dependencies (except PyTorch first)
 COPY requirements.txt .
 
-# Upgrade pip and install Python dependencies
-RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
+# Remove torch-related packages to install separately
+RUN sed -i '/torch/d' requirements.txt && \
+    sed -i '/torchaudio/d' requirements.txt && \
+    sed -i '/torchvision/d' requirements.txt && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-# Optional: Reinstall specific versions to avoid compatibility issues
-RUN pip install --upgrade accelerate \
-    && pip uninstall -y transformers accelerate \
-    && pip install transformers==4.46.3 accelerate==1.0.1
+# Install PyTorch separately for Python 3.12
+RUN pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu
 
-# Copy the full application
+# Install transformers + accelerate cleanly
+RUN pip install --upgrade accelerate transformers
+
+# Copy the rest of the app
 COPY . .
 
-# Run the application
-CMD ["python3", "app.py"]
+# Run the app
+CMD ["python", "app.py"]
