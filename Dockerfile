@@ -1,22 +1,21 @@
-# Use official Python image
 FROM python:3.10-slim
 
 WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
+    git \
     build-essential \
     gcc \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy dependencies file and install
-COPY requirements.txt ./requirements.txt
+# Copy requirements and install
+COPY requirements-cleaned.txt ./requirements.txt
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy the rest of the project
+# Copy rest of the code
 COPY . .
 
+# Expose port and run
 EXPOSE 8000
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python3", "app.py"]
