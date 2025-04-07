@@ -1,24 +1,25 @@
 FROM python:3.8-slim-buster
 
-# Install AWS CLI and system dependencies
-RUN apt update -y && apt install -y awscli build-essential
+# Install required system packages
+RUN apt update -y && apt install -y awscli build-essential gcc libffi-dev libssl-dev
 
 # Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy requirements first (use Docker cache)
+COPY requirements.txt .
+
+# Upgrade pip and install dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt || (echo "❌ pip failed, dumping requirements.txt:" && cat requirements.txt)
+
+# Copy rest of the codebase
 COPY . .
 
-# Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Optional cleanup: force reinstall to handle version issues
+RUN pip install --upgrade accelerate && \
+    pip uninstall -y transformers accelerate && \
+    pip install transformers accelerate
 
-# Fix for potential version conflicts
-RUN pip install --upgrade accelerate transformers
-
-# Default command to run the app
+# Run the application
 CMD ["python3", "app.py"]
-
-RUN pip install -r requirements.txt || cat requirements.txt
-RUN apt install -y build-essential gcc g++ libffi-dev libssl-dev
-
