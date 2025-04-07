@@ -34,8 +34,9 @@ RUN awk '!/^torch==/ && !/^torchaudio==/ && !/^torchvision==/' requirements.txt 
     mv clean_requirements.txt requirements.txt
 
 # Upgrade pip and install general Python dependencies
-RUN pip install --upgrade pip && \
+RUN pip install --upgrade pip setuptools wheel && \
     pip install -r requirements.txt
+
 
 # Install PyTorch stack (CPU-only version from PyTorch repo)
 RUN pip install torch==2.4.1 torchvision==0.20.0 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
@@ -49,5 +50,3 @@ COPY . .
 # Default run command
 CMD ["python", "app.py"]
 
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install -r requirements.txt
