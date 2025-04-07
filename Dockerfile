@@ -1,25 +1,29 @@
-FROM python:3.8-slim-buster
+# Use official Python image
+FROM python:3.10-slim
 
-# Install required system packages
-RUN apt update -y && apt install -y awscli build-essential gcc libffi-dev libssl-dev
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Set working directory
+# Create working directory
 WORKDIR /app
 
-# Copy requirements first (use Docker cache)
-COPY requirements.txt .
+# Install system dependencies (adjust as needed)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and install dependencies
-RUN pip install --upgrade pip && \
-    pip install -r requirements.txt || (echo "❌ pip failed, dumping requirements.txt:" && cat requirements.txt)
+# Install Python dependencies
+COPY requirements-cleaned.txt ./requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy rest of the codebase
+# Copy project files
 COPY . .
 
-# Optional cleanup: force reinstall to handle version issues
-RUN pip install --upgrade accelerate && \
-    pip uninstall -y transformers accelerate && \
-    pip install transformers accelerate
+# Expose the app port (change if needed)
+EXPOSE 8000
 
-# Run the application
-CMD ["python3", "app.py"]
+# Run the app (adjust if using FastAPI, Flask, etc.)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
