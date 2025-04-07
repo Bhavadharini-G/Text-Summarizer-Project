@@ -1,21 +1,22 @@
-FROM python:3.10-slim
+FROM python:3.8-slim-buster
 
+# Install AWS CLI
+RUN apt update -y && apt install -y awscli
+
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    build-essential \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install
-COPY requirements-cleaned.txt ./requirements.txt
+# Copy requirements and install dependencies
+COPY requirements.txt ./requirements.txt
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy rest of the code
+# Optional: Upgrade and reinstall accelerate and transformers cleanly
+RUN pip install --upgrade accelerate \
+    && pip uninstall -y transformers accelerate \
+    && pip install transformers accelerate
+
+# Copy the rest of the app
 COPY . .
 
-# Expose port and run
-EXPOSE 8000
+# Run the app
 CMD ["python3", "app.py"]
