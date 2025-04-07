@@ -1,9 +1,10 @@
-FROM python:3.10
+# Base Python image
+FROM python:3.12
 
-# Avoids prompts during installation
+# Prevent interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
-# System dependencies for Python + ML/AI tools
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
@@ -25,25 +26,25 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set working directory
 WORKDIR /app
 
-# Copy requirements and remove PyTorch lines
+# Copy requirements and clean it to separate torch packages
 COPY requirements.txt .
 
-RUN sed -i '/^torch==/d' requirements.txt && \
-    sed -i '/^torchaudio==/d' requirements.txt && \
-    sed -i '/^torchvision==/d' requirements.txt
+# Remove torch-related lines (we’ll install them separately due to Py 3.12)
+RUN awk '!/^torch==/ && !/^torchaudio==/ && !/^torchvision==/' requirements.txt > clean_requirements.txt && \
+    mv clean_requirements.txt requirements.txt
 
-# Install all dependencies (except torch group)
+# Upgrade pip and install general Python dependencies
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Install torch CPU version separately (compatible with Py 3.10)
+# Install PyTorch stack (CPU-only version from PyTorch repo)
 RUN pip install torch==2.4.1 torchvision==0.20.0 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 
-# Transformers, Accelerate
-RUN pip install transformers==4.46.3 accelerate==1.0.1
+# Reinstall transformers and accelerate to avoid conflicts
+RUN pip install --upgrade transformers==4.46.3 accelerate==1.0.1
 
-# Copy app code
+# Copy app source code
 COPY . .
 
-# Default run command (adjust app.py if needed)
+# Default run command
 CMD ["python", "app.py"]
