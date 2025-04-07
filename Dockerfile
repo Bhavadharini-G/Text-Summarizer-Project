@@ -31,7 +31,7 @@ RUN pip install --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose any required ports (optional)
-# EXPOSE 8000
+EXPOSE 8080
 
 # Set the default command (modify this based on your app)
 CMD ["python"]
