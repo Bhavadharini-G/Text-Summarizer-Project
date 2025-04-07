@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     git \
     wget \
+    gawk \  # <--- Add this line
     libglib2.0-0 \
     libsm6 \
     libxrender1 \
@@ -20,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     awscli \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /app
 
