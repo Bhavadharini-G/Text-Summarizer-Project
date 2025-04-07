@@ -1,9 +1,8 @@
 FROM python:3.12
 
-# Prevent interactive prompts during package install
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
+# Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
@@ -22,26 +21,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     awscli \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
 WORKDIR /app
 
-# Copy requirements file
 COPY requirements.txt .
 
-# Remove torch-related packages (to install separately due to Python 3.12 constraints)
-RUN grep -vE 'torch|torchaudio|torchvision' requirements.txt > tmp.txt && \
-    mv tmp.txt requirements.txt && \
+# 🛠 Filter only exact torch-related lines (safe even if words like "tokenizers" exist)
+RUN awk '!/^torch==/ && !/^torchaudio==/ && !/^torchvision==/' requirements.txt > clean_requirements.txt && \
+    mv clean_requirements.txt requirements.txt && \
     pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Install PyTorch separately for Python 3.12
+# ✅ Install PyTorch manually for Python 3.12
 RUN pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu
 
-# Install latest transformers and accelerate cleanly
+# ✅ Install transformers and accelerate cleanly
 RUN pip install --upgrade transformers accelerate
 
-# Copy the entire app
 COPY . .
 
-# Run the app
 CMD ["python", "app.py"]
