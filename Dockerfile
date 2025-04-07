@@ -1,32 +1,13 @@
-FROM python:3.12-slim
+FROM python:3.8-slim-buster
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
+RUN apt update -y && apt install awscli -y
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    gcc \
-    libffi-dev \
-    libssl-dev \
-    pkg-config \
-    git \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+COPY . /app
 
-# Upgrade pip and tools
-RUN pip install --upgrade pip setuptools wheel
+RUN pip install -r requirements.txt
+RUN pip install --upgrade accelerate
+RUN pip uninstall -y transformers accelerate
+RUN pip install transformers accelerate
 
-# Copy requirements and install
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy source code
-COPY . .
-
-EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python3", "app.py"]
