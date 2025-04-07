@@ -1,13 +1,20 @@
 FROM python:3.8-slim-buster
 
-RUN apt update -y && apt install awscli -y
+# Install AWS CLI and system dependencies
+RUN apt update -y && apt install -y awscli build-essential
+
+# Set working directory
 WORKDIR /app
 
-COPY . /app
+# Copy project files
+COPY . .
 
+# Install Python dependencies
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-RUN pip install --upgrade accelerate
-RUN pip uninstall -y transformers accelerate
-RUN pip install transformers accelerate
 
+# Fix for potential version conflicts
+RUN pip install --upgrade accelerate transformers
+
+# Default command to run the app
 CMD ["python3", "app.py"]

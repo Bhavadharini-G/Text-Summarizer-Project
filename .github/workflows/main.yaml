@@ -83,6 +83,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1.7.1
 
+      - name: Print Docker version & login
+        run: |
+          docker --version
+          aws sts get-caller-identity
+
+
       - name: Pull latest image
         run: |
           docker pull ${{ needs.build-and-push-ecr-image.outputs.image }}
