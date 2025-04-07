@@ -48,3 +48,6 @@ COPY . .
 
 # Default run command
 CMD ["python", "app.py"]
+
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt
