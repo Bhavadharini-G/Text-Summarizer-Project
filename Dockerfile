@@ -18,3 +18,7 @@ RUN pip install --upgrade accelerate transformers
 
 # Default command to run the app
 CMD ["python3", "app.py"]
+
+RUN pip install -r requirements.txt || cat requirements.txt
+RUN apt install -y build-essential gcc g++ libffi-dev libssl-dev
+
