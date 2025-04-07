@@ -1,33 +1,42 @@
-# Use official Python 3.12 image
+# Use Python 3.12 slim image
 FROM python:3.12-slim
+
+# Avoids prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies and AWS CLI
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    awscli \
+    build-essential \
+    git \
+    curl \
+    libffi-dev \
+    libssl-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libgl1-mesa-glx \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
-    curl \
-    libsndfile1 \
-    libgl1-mesa-glx \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements file
+# Copy requirements file first to leverage Docker cache
 COPY requirements.txt .
 
-# Upgrade pip and install dependencies
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Upgrade pip and install Python dependencies
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
 
-# Copy the rest of the project
+# Optional: Reinstall specific versions to avoid compatibility issues
+RUN pip install --upgrade accelerate \
+    && pip uninstall -y transformers accelerate \
+    && pip install transformers==4.46.3 accelerate==1.0.1
+
+# Copy the full application
 COPY . .
 
-# Expose port (adjust if needed)
-EXPOSE 8000
-
-# Default command (change if needed)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application
+CMD ["python3", "app.py"]
