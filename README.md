@@ -155,7 +155,7 @@ It allows seamless deployment whenever new code is pushed to `main`.
 
 ---
 
-## 🖼️ Sample Output – Swagger UI
+## Sample Output – Swagger UI
 
 Below is the sample output from the FastAPI Swagger interface:
 
