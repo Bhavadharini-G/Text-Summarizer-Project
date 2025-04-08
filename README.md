@@ -82,7 +82,7 @@ cd Text-Summarizer-Project
 ### 2️ Create a conda environment
 
 ```bash
-conda create -n textS python=3.12 -y
+conda create -n textS python=3.8 -y
 conda activate textS
 ```
 
