@@ -1,27 +1,17 @@
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
 
 class PredictionPipeline:
     def __init__(self):
-        # Use your Hugging Face model repo
-        self.model_name = "Bhavadharini-G/text-summarizer-custom"
-        
-        # Load tokenizer and summarization pipeline
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.pipe = pipeline("summarization", model=self.model_name, tokenizer=self.tokenizer)
+        self.model_path = "artifacts/model_trainer/model"
+        self.tokenizer_path = "artifacts/model_trainer/tokenizer"
 
     def predict(self, text):
-        gen_kwargs = {
-            "length_penalty": 0.8,
-            "num_beams": 8,
-            "max_length": 128
-        }
+        tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_path)
+        model = AutoModelForSeq2SeqLM.from_pretrained(self.model_path)
 
-        print("Dialogue:")
-        print(text)
+        summarizer = pipeline("summarization", model=model, tokenizer=tokenizer)
 
-        output = self.pipe(text, **gen_kwargs)[0]["summary_text"]
+        gen_kwargs = {"length_penalty": 0.8, "num_beams": 8, "max_length": 128}
+        summary = summarizer(text, **gen_kwargs)[0]["summary_text"]
 
-        print("\nModel Summary:")
-        print(output)
-
-        return output
+        return summary
