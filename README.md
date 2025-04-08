@@ -157,7 +157,7 @@ It allows seamless deployment whenever new code is pushed to `main`.
 ## Project Deployment
 ### Access via Public IP
 
-Open your browser and visit: http://your-ec2-public-ip:8080
+Open your browser and visit: http://(your-ec2-public-ip):8080
 
 ### Sample Output – Swagger UI
 
