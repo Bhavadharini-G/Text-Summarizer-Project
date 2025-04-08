@@ -24,3 +24,8 @@ if st.button("✨ Summarize"):
 
 st.markdown("---")
 st.markdown("<div style='text-align:center;'>Made with ❤️ by Bhavadharini G</div>", unsafe_allow_html=True)
+from transformers import AutoTokenizer, pipeline
+
+model_name = "bhavadharinig/text-summarizer-custom"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+pipe = pipeline("summarization", model=model_name, tokenizer=tokenizer)

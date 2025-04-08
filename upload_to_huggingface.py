@@ -5,7 +5,7 @@ def upload_model_to_huggingface():
     config = ConfigurationManager().get_model_evaluation_config()
 
     # Your Hugging Face repo details
-    repo_name = "Bhavadharini-G/text-summarizer-model"
+    repo_name = "bhavadharinig/text-summarizer-custom"
 
     # Create the repository on Hugging Face if it doesn’t already exist
     print(f"🔄 Creating or accessing repo: {repo_name}")
