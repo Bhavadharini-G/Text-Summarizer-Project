@@ -30,13 +30,10 @@ setuptools.setup(
     },
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src")
+    
+  
 )
 
 
-setup(
-    name="textSummarizer",
-    version="0.0.1",
-    packages=find_packages(),
-    install_requires=[],
-)
+
 
