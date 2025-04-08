@@ -159,14 +159,14 @@ It allows seamless deployment whenever new code is pushed to `main`.
 
 Open your browser and visit: http://<your-ec2-public-ip>:8080
 
-## Sample Output – Swagger UI
+### Sample Output – Swagger UI
 
 Below is the sample output from the FastAPI Swagger interface:
 
 ![Sample Output](assets/Sample_output.png)
 
 
-
+---
 
 ##  Author
 
