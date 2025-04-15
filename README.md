@@ -1,6 +1,6 @@
 #  End-to-End Text Summarizer Project
 
-This is an end-to-end implementation of a **Text Summarizer** using Natural Language Processing techniques and Transformer models. The project is structured in a modular fashion and includes setup for **local execution, Dockerization, and AWS CI/CD deployment using GitHub Actions**.
+This is an end-to-end implementation of a **Text Summarizer** using Natural Language Processing techniques and Transformer models. The project is structured in a modular fashion and includes setup for **local execution, Dockerization, AWS CI/CD deployment and Streamlit Cloud Deployment using GitHub Actions**.
 
 ---
 
@@ -29,6 +29,7 @@ Text-Summarizer-Project/
 ├── params.yaml                  # Model and tokenizer parameters
 ├── requirements.txt             # All Python dependencies
 ├── Dockerfile                   # Docker image setup
+├── streamlit_app.py             # Streamlit Cloud Deployment Setup
 └── README.md                    # Project documentation
 ```
 
@@ -67,6 +68,9 @@ GitHub Actions CI/CD setup:
 - Builds a Docker image on every `main` branch push
 - Pushes it to AWS Elastic Container Registry (ECR)
 - Pulls it onto EC2 for live deployment
+
+#### `streamlit_app.py`
+The Streamlit web app that provides an interactive user interface for text summarization. It allows users to input long text and get a summarized version in real-time. This version is optimized for deployment on **Streamlit Cloud**, providing scalable, cloud-hosted access to the summarizer with minimal setup.
 
 ---
 
@@ -167,6 +171,29 @@ Below is the sample output from the FastAPI Swagger interface:
 
 
 ---
+
+## Deploy to Streamlit Cloud
+
+Push your code to GitHub, then link it to Streamlit Cloud.
+
+## Sample UI Screenshot (Streamlit)
+
+![UI Screenshot](assets/sample_1.png) <!-- Replace with your own image if needed -->
+
+---
+
+## Project Deployment 
+
+Project Deployment Link [Streamlit Cloud](https://text-summarizer-project-ekwncftad52f3xng7fekvu.streamlit.app/).
+
+---
+
+## Sample Output - Streamlit Cloud
+
+![Sample Output](assets/sample_2.png) <!-- Replace with your own image if needed -->
+
+---
+
 
 ##  Author
 
