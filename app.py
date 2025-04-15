@@ -1,45 +1,47 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import uvicorn
-import sys
 import os
-from fastapi.templating import Jinja2Templates
-from starlette.responses import RedirectResponse
-from fastapi.responses import Response
+
 from textSummarizer.pipeline.prediction import PredictionPipeline
 
-
-text:str = "What is Text Summarization?"
+# Text input model
+class TextInput(BaseModel):
+    text: str
 
 app = FastAPI()
 
-@app.get("/", tags=["authentication"])
+# Enable CORS (optional, useful if calling API from frontend like React/Streamlit)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust as needed
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/", tags=["Root"])
 async def index():
     return RedirectResponse(url="/docs")
 
-
-
-@app.get("/train")
+@app.get("/train", tags=["Training"])
 async def training():
     try:
         os.system("python main.py")
-        return Response("Training successful !!")
-
+        return JSONResponse(content={"message": "Training successful!"})
     except Exception as e:
-        return Response(f"Error Occurred! {e}")
-    
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
-
-
-@app.post("/predict")
-async def predict_route(text):
+@app.post("/predict", tags=["Prediction"])
+async def predict_route(input: TextInput):
     try:
-
         obj = PredictionPipeline()
-        text = obj.predict(text)
-        return text
+        summary = obj.predict(input.text)
+        return JSONResponse(content={"summary": summary})
     except Exception as e:
-        raise e
-    
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
-if __name__=="__main__":
+if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

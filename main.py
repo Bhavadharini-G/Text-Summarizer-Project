@@ -4,11 +4,6 @@ import os
 # Add src to path
 sys.path.append(os.path.join(os.getcwd(), "src"))
 
-
-
-
-
-
 from textSummarizer.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from textSummarizer.pipeline.stage_02_data_validation import DataValidationTrainingPipeline
 from textSummarizer.pipeline.stage_03_data_transformation import DataTransformationTrainingPipeline
@@ -16,63 +11,22 @@ from textSummarizer.pipeline.stage_04_model_trainer import ModelTrainerTrainingP
 from textSummarizer.pipeline.stage_05_model_evaluation import ModelEvaluationTrainingPipeline
 from textSummarizer.logging import logger
 
+if __name__ == "__main__":
+    
+    stages = [
+        ("Data Ingestion stage", DataIngestionTrainingPipeline),
+        ("Data Validation stage", DataValidationTrainingPipeline),
+        ("Data Transformation stage", DataTransformationTrainingPipeline),
+        ("Model Trainer stage", ModelTrainerTrainingPipeline),
+        ("Model Evaluation stage", ModelEvaluationTrainingPipeline)
+    ]
 
-STAGE_NAME = "Data Ingestion stage"
-try:
-   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-   data_ingestion = DataIngestionTrainingPipeline()
-   data_ingestion.main()
-   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-except Exception as e:
-        logger.exception(e)
-        raise e
-
-
-STAGE_NAME = "Data Validation stage"
-try:
-   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-   data_validation = DataValidationTrainingPipeline()
-   data_validation.main()
-   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-except Exception as e:
-        logger.exception(e)
-        raise e
-
-
-STAGE_NAME = "Data Transformation stage"
-try:
-   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-   data_transformation = DataTransformationTrainingPipeline()
-   data_transformation.main()
-   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-except Exception as e:
-        logger.exception(e)
-        raise e
-
-
-STAGE_NAME = "Model Trainer stage"
-try: 
-   logger.info(f"*******************")
-   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-   model_trainer = ModelTrainerTrainingPipeline()
-   model_trainer.main()
-   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-except Exception as e:
-        logger.exception(e)
-        raise e
-
-
-STAGE_NAME = "Model Evaluation stage"
-try: 
-   logger.info(f"*******************")
-   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-   model_evaluation = ModelEvaluationTrainingPipeline()
-   model_evaluation.main()
-   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-except Exception as e:
-        logger.exception(e)
-        raise e
-
-
-
-
+    for stage_name, stage_class in stages:
+        try:
+            logger.info(f"\n\nx==========x\n>>>>> Stage: {stage_name} started <<<<<")
+            stage = stage_class()
+            stage.main()
+            logger.info(f">>>>> Stage: {stage_name} completed <<<<<\n\nx==========x\n")
+        except Exception as e:
+            logger.exception(f"Exception in {stage_name}: {e}")
+            raise e
